@@ -26,4 +26,15 @@ export interface GameState {
   dealerHand: Card[];
   playerScore: number;
   dealerScore: number;
+  gameStatus:
+    | 'betting'
+    | 'playing'
+    | 'playerBust'
+    | 'dealerBust'
+    | 'playerWin'
+    | 'dealerWin'
+    | 'push';
+  chips: number;
+  currentBet: number;
+  canDouble: boolean;
 }

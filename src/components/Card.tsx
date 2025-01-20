@@ -10,7 +10,7 @@ export const Card: React.FC<CardProps> = ({ card, className = '' }) => {
   const getSuitColor = (suit: string) => {
     return suit === 'hearts' || suit === 'diamonds'
       ? 'text-red-500'
-      : 'text-gray-800';
+      : 'text-black-800';
   };
 
   const getSuitSymbol = (suit: string) => {
