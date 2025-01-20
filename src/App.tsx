@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Card as CardComponent } from './components/Card';
 import GameControls from './components/GameControls';
-import { Card, GameState } from './types.ts';
+import { GameState } from './types.ts';
 import { createDeck, calculateHandValue } from './gameLogic';
 
 function App() {

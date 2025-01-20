@@ -17,7 +17,7 @@ export type Rank =
 export interface Card {
   suit: Suit;
   rank: Rank;
-  hidden?: boolean;
+  hidden: boolean;
 }
 
 export interface GameState {
