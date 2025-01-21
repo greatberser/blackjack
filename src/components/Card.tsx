@@ -28,7 +28,7 @@ export const Card: React.FC<CardProps> = ({ card, className = '' }) => {
     }
   };
 
-  if (card.hidden) {
+  if (card.hidden === false) {
     return (
       <div
         className={`w-24 h-36 bg-blue-800 rounded-lg shadow-lg flex items-center justify-center border-2 border-white ${className}`}

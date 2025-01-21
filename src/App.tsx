@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Card as CardComponent } from './components/Card';
 import GameControls from './components/GameControls';
-import { GameState } from './types.ts';
-import { createDeck, calculateHandValue } from './gameLogic';
+import type { GameState } from './types.ts';
+import { createDeck, calculateHandValue } from './gameLogic.ts';
 
 function App() {
   const initialState: GameState = {
@@ -56,6 +56,25 @@ function App() {
     }));
   };
 
+  const getGameResult = (
+    dealerScore: number,
+    playerScore: number
+  ): GameState['gameStatus'] => {
+    if (dealerScore > 21) return 'dealerBust';
+    if (dealerScore < playerScore) return 'playerWin';
+    if (dealerScore === playerScore) return 'push';
+    return 'dealerWin';
+  };
+
+  const calculateWinnings = (
+    gameStatus: GameState['gameStatus'],
+    currentBet: number
+  ): number => {
+    if (gameStatus === 'playerWin') return currentBet * 2;
+    if (gameStatus === 'push') return currentBet;
+    return 0;
+  };
+
   const dealerPlay = () => {
     let newDeck = [...gameState.deck];
     let newDealerHand = gameState.dealerHand.map((card) => ({
@@ -71,15 +90,8 @@ function App() {
     }
 
     const playerScore = calculateHandValue(gameState.playerHand);
-    let gameStatus: GameState['gameStatus'] = 'dealerWin';
-
-    if (dealerScore > 21) {
-      gameStatus = 'dealerBust';
-    } else if (dealerScore < playerScore) {
-      gameStatus = 'playerWin';
-    } else if (dealerScore === playerScore) {
-      gameStatus = 'push';
-    }
+    const gameStatus = getGameResult(dealerScore, playerScore);
+    const winnings = calculateWinnings(gameStatus, gameState.currentBet);
 
     setGameState((prev) => ({
       ...prev,
@@ -87,13 +99,7 @@ function App() {
       dealerHand: newDealerHand,
       dealerScore,
       gameStatus,
-      chips:
-        prev.chips +
-        (gameStatus === 'playerWin'
-          ? prev.currentBet * 2
-          : gameStatus === 'push'
-            ? prev.currentBet
-            : 0),
+      chips: prev.chips + winnings,
     }));
   };
 
@@ -134,6 +140,27 @@ function App() {
     }));
   };
 
+  const getGameStatusMessage = (status: GameState['gameStatus']): string => {
+    const messages = {
+      playerBust: 'Bust! You lose!',
+      dealerBust: 'Dealer busts! You win!',
+      playerWin: 'You win!',
+      dealerWin: 'Dealer wins!',
+      push: 'Push!',
+      betting: '',
+      playing: '',
+    };
+    return messages[status];
+  };
+
+  const isGameOver = [
+    'playerBust',
+    'dealerBust',
+    'playerWin',
+    'dealerWin',
+    'push',
+  ].includes(gameState.gameStatus);
+
   return (
     <div className="min-h-screen bg-green-800 flex flex-col items-center justify-center p-8">
       <div className="bg-green-900 p-8 rounded-xl shadow-2xl w-full max-w-4xl">
@@ -150,8 +177,11 @@ function App() {
               Dealer's Hand ({gameState.dealerScore})
             </h2>
             <div className="flex justify-center gap-4">
-              {gameState.dealerHand.map((card, index) => (
-                <CardComponent key={index} card={card} />
+              {gameState.dealerHand.map((card, i) => (
+                <CardComponent
+                  key={`dealer-${i}-${card.suit}-${card.rank}`}
+                  card={card}
+                />
               ))}
             </div>
           </div>
@@ -161,32 +191,21 @@ function App() {
               Your Hand ({gameState.playerScore})
             </h2>
             <div className="flex justify-center gap-4">
-              {gameState.playerHand.map((card, index) => (
-                <CardComponent key={index} card={card} />
+              {gameState.playerHand.map((card, i) => (
+                <CardComponent
+                  key={`player-${i}-${card.suit}-${card.rank}`}
+                  card={card}
+                />
               ))}
             </div>
           </div>
         </div>
 
         <div className="mt-8 flex flex-col items-center gap-4">
-          {[
-            'playerBust',
-            'dealerBust',
-            'playerWin',
-            'dealerWin',
-            'push',
-          ].includes(gameState.gameStatus) ? (
+          {isGameOver ? (
             <div className="text-center">
               <p className="text-2xl font-bold text-white mb-4">
-                {gameState.gameStatus === 'playerBust'
-                  ? 'Bust! You lose!'
-                  : gameState.gameStatus === 'dealerBust'
-                    ? 'Dealer busts! You win!'
-                    : gameState.gameStatus === 'playerWin'
-                      ? 'You win!'
-                      : gameState.gameStatus === 'dealerWin'
-                        ? 'Dealer wins!'
-                        : 'Push!'}
+                {getGameStatusMessage(gameState.gameStatus)}
               </p>
               <button
                 onClick={startNewGame}

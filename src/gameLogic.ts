@@ -21,7 +21,7 @@ export const createDeck = (): Card[] => {
 
   for (const suit of suits) {
     for (const rank of ranks) {
-      deck.push({ suit, rank });
+      deck.push({ suit, rank, hidden: false });
     }
   }
 
