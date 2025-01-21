@@ -70,9 +70,15 @@ function App() {
     gameStatus: GameState['gameStatus'],
     currentBet: number
   ): number => {
-    if (gameStatus === 'playerWin') return currentBet * 2;
-    if (gameStatus === 'push') return currentBet;
-    return 0;
+    switch (gameStatus) {
+      case 'playerWin':
+      case 'dealerBust':
+        return currentBet * 2;
+      case 'push':
+        return currentBet;
+      default:
+        return 0;
+    }
   };
 
   const dealerPlay = () => {
