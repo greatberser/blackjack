@@ -28,13 +28,21 @@ export const Card: React.FC<CardProps> = ({ card, className = '' }) => {
     }
   };
 
-  if (card.hidden === false) {
+  if (card.hidden) {
     return (
       <div
-        className={`w-24 h-36 bg-blue-800 rounded-lg shadow-lg flex items-center justify-center border-2 border-white ${className}`}
+        className={`w-24 h-36 bg-gradient-to-br from-blue-600 to-blue-800 rounded-xl shadow-lg border-2 border-white/20 transform transition-transform hover:scale-105 ${className}`}
       >
-        <div className="w-16 h-24 rounded bg-blue-700 flex items-center justify-center">
-          <span className="text-2xl text-blue-500">♠♣♥♦</span>
+        <div className="w-full h-full rounded-lg bg-pattern flex items-center justify-center p-3">
+          <div className="w-full h-full rounded-lg border-2 border-white/10 flex items-center justify-center">
+            <div className="grid grid-cols-2 gap-1">
+              {[...Array(4)].map((_, i) => (
+                <span key={i} className="text-white/20 text-xl">
+                  {['♠', '♣', '♥', '♦'][i]}
+                </span>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -42,7 +50,7 @@ export const Card: React.FC<CardProps> = ({ card, className = '' }) => {
 
   return (
     <div
-      className={`w-24 h-36 bg-white rounded-lg shadow-lg flex flex-col p-2 border-2 border-gray-200 ${className}`}
+      className={`w-24 h-36 bg-white rounded-xl shadow-lg flex flex-col p-3 border border-gray-200 transform transition-transform hover:scale-105 ${className}`}
     >
       <div className="flex justify-between items-center">
         <span className={`text-xl font-bold ${getSuitColor(card.suit)}`}>
